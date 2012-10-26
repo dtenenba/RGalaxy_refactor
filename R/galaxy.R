@@ -126,6 +126,7 @@ galaxy <-
             sep="")
         
     }
+    commandText <- paste(commandText, "2>&1", sep="\n")
     
     commandNode <- newXMLNode("command", newXMLTextNode(commandText),
         parent=xml)

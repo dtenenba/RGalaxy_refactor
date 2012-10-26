@@ -5,7 +5,7 @@ setRefClass("MsgClass",
 )
 
 
-setClass("Galaxy")
+setClass("Galaxy", contains="VIRTUAL")
 
 setClass("GalaxyConfig", contains="Galaxy",
     representation("galaxyHome"="character",
@@ -60,7 +60,7 @@ setClass("GalaxyParam",
         required="logical",
         requiredMsg="character"
         
-    ), contains="Galaxy", validity=function(object){
+    ), contains=c("Galaxy","VIRTUAL"), validity=function(object){
         
         empty <- function(x) {
             return(length(slot(object, x))==0)
