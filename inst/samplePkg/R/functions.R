@@ -54,10 +54,10 @@ testCheckboxes <- function(checkbox1=GalaxyLogicalParam(),
     checkbox2=GalaxyLogicalParam(),
     outfile=GalaxyOutput("myoutput", "txt"))
 {
-    if(!class(checkbox1) == "logical") stop("checkbox1 is not logical!")
-    if(!class(checkbox2) == "logical") stop("checkbox2 is not logical!")
-    if(!checkbox1) stop("checkbox1 is FALSE!")
-    if(checkbox2) stop("checkbox2 is TRUE!")
+    if(!is(checkbox1, "logical")) gstop("checkbox1 is not logical!")
+    if(!is(checkbox2, "logical")) gstop("checkbox2 is not logical!")
+    if(!checkbox1) gstop("checkbox1 is FALSE!")
+    if(checkbox2) gstop("checkbox2 is TRUE!")
     write(sprintf("checkbox1==%s\ncheckbox2==%s", checkbox1, checkbox2),
         file=outfile, append=TRUE)
 }

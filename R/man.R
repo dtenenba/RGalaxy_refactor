@@ -84,7 +84,7 @@ parseSectionFromText <- function(rd, section)
         }
     }
     if (!found)
-        stop(sprintf("Did not find section '%s' in man page.", section))
+        gstop(sprintf("Did not find section '%s' in man page.", section))
     ret <- gsub("^ *", "", ret)
     if (nchar(ret[1])==0 && length(ret)>2)
     {
@@ -98,7 +98,7 @@ getHelp <- function(arg, rd)
     tbl <- tools:::.Rd_get_argument_table(rd)
     if (!arg %in% tbl[,1])
     {
-        stop(sprintf("No documentation for argument '%s'.", arg))
+        gstop(sprintf("No documentation for argument '%s'.", arg))
     }
     help <- tbl[tbl[,1] == arg, 2]
     help <- gsub(" {2,}", "", help)

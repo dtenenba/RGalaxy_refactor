@@ -10,13 +10,13 @@ functionToGalaxify2 <- function(
     data1 <- tryCatch({
         as.matrix(read.delim(inputfile1, row.names=1))
     }, error=function(err) {
-        stop("failed to read first data file: ", conditionMessage(err))
+        gstop("failed to read first data file: ", conditionMessage(err))
     })
     
     data2 <- tryCatch({
         as.matrix(read.delim(inputfile2, row.names=1))
     }, error=function(err) {
-        stop("failed to read second data file: ", conditionMessage(err))
+        gstop("failed to read second data file: ", conditionMessage(err))
     })
     
     data3 <- data1 + data2

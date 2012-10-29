@@ -225,7 +225,7 @@ PFAM and SYMBOL names for them. It's quite easy to write a function
 to expose this in Galaxy:
 
 <<useful-example>>=
-probeLookup <- function(probe_ids=character(),
+probeLookup <- function(probe_ids=GalaxyCharacterParam(),
     outputfile=GalaxyOutput("probeLookup", "csv"))
 {
     ## probe_ids can be something like "1002_f_at 1003_s_at"

@@ -128,7 +128,17 @@ test_missing_parameters <- function()
 
 test_galaxy_sanity_checks <- function()
 {
-    selectoptions <- list("TitleA"="A", "TitleB"="B")
+#    checkException(galaxy(ls, 1, galaxyConfig=1),
+#       "galaxy allows unnamed parameters")
+
+    galaxyConfig=GalaxyConfig(galaxyHome, toolDir, "Test Section", 
+        "testSectionId")
+
+    checkException(galaxy(ls, a=2, galaxyConfig=galaxyConfig),
+        "galaxy allows 'plain' types")
+
+#    checkException(galaxy())
+#    selectoptions <- list("TitleA"="A", "TitleB"="B")
     
     ## todo add new check for this:
     
