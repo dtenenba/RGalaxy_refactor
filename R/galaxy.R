@@ -1,5 +1,7 @@
 RtoGalaxyTypeMap <- list("character"="text", "integer"="integer",
-    "numeric"="float", "logical"="boolean")
+    "numeric"="float", "logical"="boolean",
+    "GalaxyIntegerParam"="integer", "GalaxyNumericParam"="float",
+    "GalaxyCharacterParam"="text", "GalaxyLogicalParam"="boolean")
 
 
 printf <- function(...) print(noquote(sprintf(...)))
@@ -76,6 +78,9 @@ galaxy <-
 
     paramList <- list(...)
 
+    ## TODO check to make sure valid classes are passed 
+    ## (i.e, GalaxyIntegerParam not integer)
+
     funcName <- deparse(substitute(func))
 
     rd <- getManPage(manpage, package)
@@ -139,6 +144,7 @@ galaxy <-
     {
         item <- funcInfo[name][[1]]
         param <- paramList[name][[1]]
+        galaxyItem <- eval(formals(func)[name])
         if (!item$type == "GalaxyOutput")
         {
             paramNode <- newXMLNode("param", parent=inputsNode)
@@ -151,9 +157,9 @@ galaxy <-
             } else {
                 validatorNode <- newXMLNode("validator", parent=paramNode)
                 xmlAttrs(validatorNode)["type"] <- "empty_field"
-                dummyParam <- GalaxyParam()
+                ##dummyParam <- GalaxyParam()
                 xmlAttrs(validatorNode)["message"] <-
-                    dummyParam@requiredMsg
+                    eval(formals(func)[[name]])@requiredMsg
                 xmlAttrs(paramNode)['optional'] <- 'false'
             }
             if (item$type == "GalaxyInputFile")
@@ -167,6 +173,13 @@ galaxy <-
             type <- RtoGalaxyTypeMap[[item$type]]
             if (item$type == "GalaxyInputFile") type <- "data"
             if (item$length > 1) type <- "select"
+            .printf("===\n")
+            .printf("name==%s\n",name)
+            .printf("item$type==%s\n", item$type)
+            .printf("length(type)==%s\n", length(type))
+            .printf("type==%s\n", type)
+            .printf("paramNode==%s\n",capture.output(paramNode))
+            paramNode
             xmlAttrs(paramNode)["type"] <- type
 
             if(!is.null(item$default))
@@ -291,6 +304,11 @@ createScriptFile <- function(scriptFileName, func, funcName, funcInfo,
         else
             type <- item$type
         if (type %in% c("GalaxyOutput", "GalaxyInputFile")) type <- "character"
+        # TODO - more idiomatically
+        if (type == "GalaxyCharacterParam") type <- "character"
+        if (type == "GalaxyIntegerParam") type <- "integer"
+        if (type == "GalaxyNumericParam") type <- "numeric"
+        if (type == "GalaxyLogicalParam") type <- "logical"
         repVal <- paste(repVal, "option_list$",
             sprintf("%s <- make_option('--%s', type='%s')\n",
             name, name, type),
@@ -365,7 +383,7 @@ checkInputs <- function(a, b=1, c)
     f
 }
 
-## todo: fix so "numOTUs" returns "Num OTUs" instead of "Num O T Us"
+## TODO: fix so "numOTUs" returns "Num OTUs" instead of "Num O T Us"
 getFriendlyName <- function(camelName)
 {
     chars <- strsplit(camelName, split="")
@@ -396,7 +414,7 @@ getFuncInfo <- function(func, param)
         msg <- sprintf("'list' is an invalid type for parameter '%s'.\n",
             param)
         msg <- c(msg,
-            "Use a homogeneous type like 'integer', 'character', etc.")
+            "Use a subclass of GalaxyParam")
         stop(msg)
     }
     ret$length <- length(eval(f))

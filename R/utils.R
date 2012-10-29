@@ -24,3 +24,5 @@ gwarning <-
 {
     warning(.msg(...), call.=call., immediate.=immediate.)
 }
+
+.printf <- function(...) cat(noquote(sprintf(...)))

@@ -60,7 +60,12 @@ setClass("GalaxyParam",
         required="logical",
         requiredMsg="character"
         
-    ), contains=c("Galaxy","VIRTUAL"), validity=function(object){
+    ), 
+    prototype=list(
+            required=FALSE,
+            requiredMsg="This field is required."
+        ),
+    contains=c("Galaxy","VIRTUAL"), validity=function(object){
         
         empty <- function(x) {
             return(length(slot(object, x))==0)
@@ -143,6 +148,20 @@ GalaxyParam <- function(
         size=size, required=required, requiredMsg=requiredMsg)
 }
 
+GalaxyIntegerParam = setClass("GalaxyIntegerParam",
+    contains=c("GalaxyParam", "integer"))
+
+GalaxyNumericParam = setClass("GalaxyNumericParam",
+    contains=c("GalaxyParam", "numeric"))
+
+GalaxyCharacterParam = setClass("GalaxyCharacterParam",
+    contains=c("GalaxyParam", "character"))
+
+GalaxyLogicalParam = setClass("GalaxyLogicalParam",
+    contains=c("GalaxyParam", "logical"))
+
+
+
 setClass("GalaxyOutput", representation(format="character"),
     contains=c("Galaxy", "character"), validity=function(object){
         empty <- function(x) {
@@ -171,7 +190,7 @@ GalaxyOutput <-
 }
 
 
-setClass("GalaxyInputFile", contains=c("Galaxy", "character"),
+setClass("GalaxyInputFile", contains=c("GalaxyParam", "character"),
     representation("required"="logical"))
 
 

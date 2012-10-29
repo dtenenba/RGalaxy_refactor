@@ -2,6 +2,11 @@ export(galaxy, functionToGalaxify, anotherTestFunction, GalaxyParam,
     GalaxyConfig, GalaxyOutput, getFriendlyName, GalaxyInputFile,
     testFunctionWithSelect)
 exportClass(GalaxyParam, GalaxyConfig, GalaxyOutput, GalaxyInputFile)
+exportClass(GalaxyIntegerParam, GalaxyNumericParam,
+	GalaxyCharacterParam, GalaxyLogicalParam)
+export(GalaxyIntegerParam, GalaxyNumericParam,
+	GalaxyCharacterParam, GalaxyLogicalParam)
+export(gstop, gwarning, gmessage)
 import(BiocGenerics)
 importFrom(Biobase, copySubstitute)
 importFrom(roxygen2, roxygenize, rd_roclet)
