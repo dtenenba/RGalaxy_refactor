@@ -1,7 +1,7 @@
-export(galaxy, functionToGalaxify, anotherTestFunction, GalaxyParam,
+export(galaxy, functionToGalaxify, anotherTestFunction,
     GalaxyConfig, GalaxyOutput, getFriendlyName, GalaxyInputFile,
     testFunctionWithSelect)
-exportClass(GalaxyParam, GalaxyConfig, GalaxyOutput, GalaxyInputFile)
+exportClass(GalaxyConfig, GalaxyOutput, GalaxyInputFile)
 exportClass(GalaxyIntegerParam, GalaxyNumericParam,
 	GalaxyCharacterParam, GalaxyLogicalParam)
 export(GalaxyIntegerParam, GalaxyNumericParam,

@@ -62,6 +62,13 @@ setClass("GalaxyParam",
         
     ), 
     prototype=list(
+            label=character(0),
+            min=numeric(0),
+            max=numeric(0),
+            force_select=FALSE,
+            display=character(0),
+            checked=FALSE,
+            size=60L,
             required=FALSE,
             requiredMsg="This field is required."
         ),

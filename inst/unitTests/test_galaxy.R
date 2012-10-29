@@ -70,13 +70,10 @@ old_test_galaxy_param <- function()
     checkTrue(class(gp)=="GalaxyParam", "gp has wrong class!")
 }
 
-test_galaxy <- function() 
+.test_galaxy <- function() 
 {
 
     galaxy(functionToGalaxify,
-        manpage="functionToGalaxify",
-        package="RGalaxy",
-        version=packageDescription("RGalaxy")$Version,
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir, "Test Section", 
             "testSectionId"))
     
@@ -92,15 +89,15 @@ test_galaxy <- function()
         
     doc <- xmlInternalTreeParse(XML_file)
     checkTrue(any(class(doc)=="XMLInternalDocument"), "invalid XML file!")
-    
+        
 }
 
-test_galaxy_on_function_not_in_package <- function() 
+.test_galaxy_on_function_not_in_package <- function() 
 {
 
     base::source(system.file("extdata", "functionToGalaxify2.R", package="RGalaxy"))
     manpage <- system.file("extdata", "functionToGalaxify2.Rd", package="RGalaxy")
-    galaxy(functionToGalaxify,
+    galaxy(functionToGalaxify2,
         manpage=manpage,
         version=packageDescription("RGalaxy")$Version,
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir, "Test Section",
@@ -123,13 +120,13 @@ test_galaxy_on_function_not_in_package <- function()
 
 
 
-test_missing_parameters <- function()
+.test_missing_parameters <- function()
 {
     checkException(galaxy(), "Can't call galaxy() with no arguments")
 }
 
 
-test_galaxy_sanity_checks <- function()
+.test_galaxy_sanity_checks <- function()
 {
     selectoptions <- list("TitleA"="A", "TitleB"="B")
     
@@ -181,16 +178,12 @@ test_galaxy_sanity_checks <- function()
     
 }
 
-test_galaxy_with_select <- function()
+.test_galaxy_with_select <- function()
 {
     selectoptions <- list("TitleA"="A", "TitleB"="B")
     
     funcName <- "testFunctionWithSelect"
     galaxy(testFunctionWithSelect,
-        manpage=funcName,
-        package="RGalaxy",
-        plotTitle=GalaxyParam(force_select=TRUE),
-        version=packageDescription("RGalaxy")$Version,
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir, "Test Section",
             "testSectionId"))
     
@@ -256,18 +249,15 @@ test_galaxy_with_select <- function()
     
 }
 
-test_required_option <- function()
+.test_required_option <- function()
 {
     base::source(system.file("samplePkg", "R", "functions.R", package="RGalaxy"))
     galaxy(testRequiredOption,
         manpage=system.file("samplePkg", "man",
         "testRequiredOption.Rd", package="RGalaxy"),
-        requiredOption=GalaxyParam(required=TRUE,
-            requiredMsg="THIS FIELD IS MANDATORY"),
         version="0.99.0",
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir,
-            "Test Section", "testSectionId"),
-        packageSourceDir=system.file("samplePkg", package="RGalaxy"))
+            "Test Section", "testSectionId"))
     checkTrue(file.exists(system.file("samplePkg", "man",
         "testRequiredOption.Rd", package="RGalaxy")))
     destDir <- file.path(galaxyHome, "tools", toolDir)
@@ -287,25 +277,20 @@ test_required_option <- function()
     checkEquals("THIS FIELD IS MANDATORY",
         xmlAttrs(validatorNode[[1]])['message'], checkNames=FALSE)
     paramNode <- xpathApply(doc, "/tool/inputs/param[@name='requiredOption']")
-    print("------")
-    print(xmlAttrs(paramNode[[1]])['label'])
-    print("=====")
     checkEquals("[required] Required Option",
         xmlAttrs(paramNode[[1]])['label'], checkNames=FALSE)    
 }
 
-test_missing_param <- function()
+.test_missing_param <- function()
 {
     base::source(system.file("samplePkg", "R", "functions.R", package="RGalaxy"))
     galaxy(testMissingParams,
         manpage=system.file("samplePkg", "man",
         "testMissingParams.Rd", package="RGalaxy"),
-        requiredParam=GalaxyParam(required=TRUE,
-            requiredMsg="THIS FIELD IS MANDATORY"),
         version="0.99.0",
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir,
             "Test Section", "testSectionId"),
-        packageSourceDir=system.file("samplePkg", package="RGalaxy"))
+        dirToRoxygenize=system.file("samplePkg", package="RGalaxy"))
     checkTrue(file.exists(system.file("samplePkg", "man",
         "testMissingParams.Rd", package="RGalaxy")))
     destDir <- file.path(galaxyHome, "tools", toolDir)
@@ -318,7 +303,7 @@ test_missing_param <- function()
     checkEquals(0, res)
     output <- paste(readLines(d), collapse="")
     expected <- paste("requiredParam==required",
-        "paramWithDefault==1optionalParam==character()outfile==", d, sep="")
+        "paramWithDefault==GalaxyIntegerParam(1)optionalParam==GalaxyCharacterParam()outfile==", d, sep="")
     checkEquals(expected, output)
 }
 
@@ -330,8 +315,7 @@ test_checkboxes <- function()
         "testCheckboxes.Rd", package="RGalaxy"),
         version="0.99.0",
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir,
-            "Test Section", "testSectionId"),
-        packageSourceDir=system.file("samplePkg", package="RGalaxy"))
+            "Test Section", "testSectionId"))
     checkTrue(file.exists(system.file("samplePkg", "man",
         "testCheckboxes.Rd", package="RGalaxy")))
     destDir <- file.path(galaxyHome, "tools", toolDir)
@@ -345,22 +329,16 @@ test_checkboxes <- function()
     checkEquals(0, res)
 }
 
-test_multiple_galaxifications_do_not_overwrite_each_other <- function()
+.test_multiple_galaxifications_do_not_overwrite_each_other <- function()
 {
     file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
         file.path(galaxyHome, "tool_conf.xml"), overwrite=TRUE)
     
     galaxy(functionToGalaxify,
-        manpage="functionToGalaxify",
-        package="RGalaxy",
-        version=packageDescription("RGalaxy")$Version,
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir, "Test Section",
             "testSectionId"))
     
     galaxy(anotherTestFunction,
-        manpage="anotherTestFunction",
-        package="RGalaxy",
-        version=packageDescription("RGalaxy")$Version,
         galaxyConfig=GalaxyConfig(galaxyHome, toolDir, "Test Section",
             "testSectionId"))
     toolfile <- file.path(galaxyHome, "tool_conf.xml")

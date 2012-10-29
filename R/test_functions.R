@@ -37,7 +37,8 @@ functionToGalaxify <- function(inputfile1=GalaxyInputFile(),
 #' @param outputfile2 the pdf output file
 testFunctionWithSelect <- function(inputfile1=GalaxyInputFile(),
     inputfile2=GalaxyInputFile(),
-    plotTitle=GalaxyCharacterParam(c("TitleA"="A", "TitleB"="B")),
+    plotTitle=GalaxyCharacterParam(c("TitleA"="A", "TitleB"="B"),
+        force_select=TRUE),
     plotSubTitle=GalaxyCharacterParam("My subtitle"),
     outputfile1=GalaxyOutput("mydata", "csv"),
     outputfile2=GalaxyOutput("myplot", "pdf"))
@@ -49,7 +50,7 @@ testFunctionWithSelect <- function(inputfile1=GalaxyInputFile(),
 anotherTestFunction <- function(inputfile1=GalaxyInputFile(),
     inputfile2=GalaxyInputFile(),
     plotTitle=GalaxyCharacterParam(c("TitleA"="A", "TitleB"="B")),
-    plotSubTitle="My subtitle",
+    plotSubTitle=GalaxyCharacterParam("My subtitle"),
     outputfile1=GalaxyOutput("mydata", "csv"),
     outputfile2=GalaxyOutput("myplot", "pdf"))
 {

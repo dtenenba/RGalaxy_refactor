@@ -26,3 +26,23 @@ gwarning <-
 }
 
 .printf <- function(...) cat(noquote(sprintf(...)))
+
+getPackage <- function(func)
+{
+    funcName <- deparse(substitute(func))
+    env <- NULL
+    tryCatch(env <- environment(func),
+        error=function(x) {})
+    if (is.null(env)) return(NULL)
+    name <- environmentName(env)
+    if (name == "R_GlobalEnv") return(NULL)
+    if (name == "") return(environmentName(parent.env(env)))
+    name
+}
+
+getVersion <- function(func)
+{
+    funcName <- deparse(substitute(func))
+    tryCatch(packageDescription(getPackage(func))$Version,
+        error=function(x) NULL)
+}

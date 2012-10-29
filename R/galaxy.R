@@ -47,18 +47,22 @@ editToolConfXML <-
 
 ## todo break into smaller functions
 galaxy <- 
-    function(func, manpage, ..., 
+    function(func, 
+        package=getPackage(func),
+        manpage=deparse(substitute(func)), 
+        ..., 
         name=getFriendlyName(deparse(substitute(func))),
-        package=NULL, is.exported=NULL,
-        version, galaxyConfig, packageSourceDir,
+        version=getVersion(func),
+        galaxyConfig,
+        dirToRoxygenize,
         useRserve=FALSE)
 {
-    requiredFields <- c("func", "manpage", "galaxyConfig")
+    requiredFields <- c("func", "galaxyConfig")
     missingFields <- character(0)
     
-    if (!missing(packageSourceDir)) 
-        roxygenize(packageSourceDir, roclets=("rd"))
-    
+    if (!missing(dirToRoxygenize)) 
+        roxygenize(dirToRoxygenize, roclets=("rd"))
+
     for (requiredField in requiredFields)
     {
         is.missing <- do.call(missing, list(requiredField))
@@ -85,7 +89,7 @@ galaxy <-
 
     rd <- getManPage(manpage, package)
     title <- getTitle(rd)
-    
+
     fullToolDir <- file.path(galaxyConfig@galaxyHome, "tools",
         galaxyConfig@toolDir)
     dir.create(file.path(fullToolDir), recursive=TRUE, showWarnings=FALSE)
@@ -103,7 +107,7 @@ galaxy <-
     }
     
     createScriptFile(scriptFileName, func, funcName, funcInfo, paramList,
-        package, is.exported, useRserve)
+        package, useRserve)
     
     xmlFileName <- file.path(fullToolDir, paste(funcName, "xml", sep="."))
     unlink(xmlFileName)
@@ -117,6 +121,7 @@ galaxy <-
         version <- packageDescription(package)$Version
     xmlAttrs(xml)["name"] <- name
     xmlAttrs(xml)["version"] <- version
+
     descNode <- newXMLNode("description", newXMLTextNode(title),
         parent=xml)
     
@@ -144,7 +149,7 @@ galaxy <-
     {
         item <- funcInfo[name][[1]]
         param <- paramList[name][[1]]
-        galaxyItem <- eval(formals(func)[name])
+        galaxyItem <- eval(formals(func)[name][[1]])
         if (!item$type == "GalaxyOutput")
         {
             paramNode <- newXMLNode("param", parent=inputsNode)
@@ -173,13 +178,6 @@ galaxy <-
             type <- RtoGalaxyTypeMap[[item$type]]
             if (item$type == "GalaxyInputFile") type <- "data"
             if (item$length > 1) type <- "select"
-            .printf("===\n")
-            .printf("name==%s\n",name)
-            .printf("item$type==%s\n", item$type)
-            .printf("length(type)==%s\n", length(type))
-            .printf("type==%s\n", type)
-            .printf("paramNode==%s\n",capture.output(paramNode))
-            paramNode
             xmlAttrs(paramNode)["type"] <- type
 
             if(!is.null(item$default))
@@ -195,9 +193,8 @@ galaxy <-
             
             attributeFields <- c("label",  "min", "max",
                 "force_select", "display", "checked", "size")
-            if ( (!is.null(param)) && param@required){
+            if (galaxyItem@required) {
                 item$label <- paste("[required]", item$label)
-                
             }
             for (field in attributeFields)
             {
@@ -209,18 +206,41 @@ galaxy <-
                 }
             }
 
-            if (is.null(param))
-                size <- numeric(0)
-            else
-                size <- as.character(slot(param, "size"))
-            if (type == "text" && length(size) == 0)
-                xmlAttrs(paramNode)['size'] <- "60"
+
+            if (type == "boolean")
+            {
+                if (length(galaxyItem@checked))
+                    xmlAttrs(paramNode)['checked'] <-
+                        tolower(as.character(galaxyItem@checked))
+            }
+
+            if (type == "text") {
+                galaxyItem
+                if (length(galaxyItem@size))
+                xmlAttrs(paramNode)['size'] = as.character(galaxyItem@size)
+            }
+
+            if(type %in% c("integer", "float"))
+            {
+                if(length(galaxyItem@min))
+                    xmlAttrs(paramNode)['min'] <- as.character(galaxyItem@min)
+                if(length(galaxyItem@max))
+                    xmlAttrs(paramNode)['max'] <- as.character(galaxyItem@max)
+            }
+
             
             xmlAttrs(paramNode)['label'] <- item$label
             
             
             if (type=="select")
             {
+                xmlAttrs(paramNode)['force_select'] <-
+                    as.character(galaxyItem@force_select)
+                if (length(galaxyItem@display))
+                    xmlAttrs(paramNode)['display'] <-
+                        as.character(galaxyItem@display)
+
+
                 if (!is.null(item$selectoptions))
                 {
                     selectoptions <- eval(item$selectoptions)
@@ -282,7 +302,7 @@ displayFunction <- function(func, funcName)
 }
 
 createScriptFile <- function(scriptFileName, func, funcName, funcInfo,
-    paramList, package, is.exported, useRserve)
+    paramList, package, useRserve)
 {
     unlink(scriptFileName)
 
@@ -321,14 +341,7 @@ createScriptFile <- function(scriptFileName, func, funcName, funcInfo,
         repList$FUNCTION <- "## function body not needed here, it is in package"
         repList$LIBRARY <- paste("suppressPackageStartupMessages(library(", package, "))", sep="")
         do.call(library, list(package))
-        if ((!is.null(is.exported)) && length(is.exported)>0 && 
-            is.exported==FALSE)
-        {
-            repList$FULLFUNCNAME <- sprintf("%s:::%s", package, funcName)
-        } else {
-            repList$FULLFUNCNAME <- funcName
-        }
-        
+        repList$FULLFUNCNAME <- funcName
     } else {
         repList$LIBRARY <- ""
         repList$FULLFUNCNAME <- funcName
