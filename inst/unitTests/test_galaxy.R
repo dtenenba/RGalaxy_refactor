@@ -70,7 +70,7 @@ old_test_galaxy_param <- function()
     checkTrue(class(gp)=="GalaxyParam", "gp has wrong class!")
 }
 
-.test_galaxy <- function() 
+test_galaxy <- function() 
 {
 
     galaxy(functionToGalaxify,
@@ -92,7 +92,7 @@ old_test_galaxy_param <- function()
         
 }
 
-.test_galaxy_on_function_not_in_package <- function() 
+test_galaxy_on_function_not_in_package <- function() 
 {
 
     base::source(system.file("extdata", "functionToGalaxify2.R", package="RGalaxy"))
@@ -120,13 +120,13 @@ old_test_galaxy_param <- function()
 
 
 
-.test_missing_parameters <- function()
+test_missing_parameters <- function()
 {
     checkException(galaxy(), "Can't call galaxy() with no arguments")
 }
 
 
-.test_galaxy_sanity_checks <- function()
+test_galaxy_sanity_checks <- function()
 {
     selectoptions <- list("TitleA"="A", "TitleB"="B")
     
@@ -178,7 +178,7 @@ old_test_galaxy_param <- function()
     
 }
 
-.test_galaxy_with_select <- function()
+test_galaxy_with_select <- function()
 {
     selectoptions <- list("TitleA"="A", "TitleB"="B")
     
@@ -249,7 +249,7 @@ old_test_galaxy_param <- function()
     
 }
 
-.test_required_option <- function()
+test_required_option <- function()
 {
     base::source(system.file("samplePkg", "R", "functions.R", package="RGalaxy"))
     galaxy(testRequiredOption,
@@ -281,7 +281,7 @@ old_test_galaxy_param <- function()
         xmlAttrs(paramNode[[1]])['label'], checkNames=FALSE)    
 }
 
-.test_missing_param <- function()
+test_missing_param <- function()
 {
     base::source(system.file("samplePkg", "R", "functions.R", package="RGalaxy"))
     galaxy(testMissingParams,
@@ -329,7 +329,7 @@ test_checkboxes <- function()
     checkEquals(0, res)
 }
 
-.test_multiple_galaxifications_do_not_overwrite_each_other <- function()
+test_multiple_galaxifications_do_not_overwrite_each_other <- function()
 {
     file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
         file.path(galaxyHome, "tool_conf.xml"), overwrite=TRUE)
