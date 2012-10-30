@@ -45,6 +45,29 @@ editToolConfXML <-
     saveXML(doc, file=toolConfFile)
 }
 
+
+isTestable <- function(funcInfo, funcName, package) 
+{   
+    testables <- logical(0)
+    for (info in funcInfo)
+    {
+        testable <- FALSE
+        if (!is.null(info$testValues) && length(info$testValues) > 0)
+            testable <- TRUE
+        if (length(info['type']) > 0 &&
+            info['type'] %in% c("GalaxyInputFile", "GalaxyOutput") &&
+            !is.null(package))
+        {
+            testFile <- system.file("functionalTests", funcName,
+                info$param, package=package)
+            testable <- file.exists(testFile)
+        }
+        testables <- c(testables, testable)
+    }
+    all(testables)
+}
+
+
 ## todo break into smaller functions
 galaxy <- 
     function(func, 
@@ -96,28 +119,8 @@ galaxy <-
     for (param in names(formals(func)))
         funcInfo[[param]] <- getFuncInfo(func, param)
     
-    isTestable <- function() 
-    {   
-        testables <- logical(0)
-        for (info in funcInfo)
-        {
-            testable <- FALSE
-            if (!is.null(info$testValues) && length(info$testValues) > 0)
-                testable <- TRUE
-            if (length(info['type']) > 0 &&
-                info['type'] %in% c("GalaxyInputFile", "GalaxyOutput") &&
-                !is.null(package))
-            {
-                testFile <- system.file("functionalTests", funcName,
-                    info$param, package=package)
-                testable <- file.exists(testFile)
-            }
-            testables <- c(testables, testable)
-        }
-        all(testables)
-    }
 
-    if (!isTestable()) 
+    if (!isTestable(funcInfo, funcName, package)) 
         gwarning("Not enough information to create a functional test.")
         
     if (!suppressWarnings(any(lapply(funcInfo,
@@ -167,7 +170,7 @@ galaxy <-
     xmlAttrs(commandNode)["interpreter"] <- "Rscript --vanilla"
     inputsNode <- newXMLNode("inputs", parent=xml)
     outputsNode <- newXMLNode("outputs", parent=xml)
-    if (isTestable())
+    if (isTestable(funcInfo, funcName, package))
         testsNode <- newXMLNode("tests", parent=xml)
     
     for (name in names(funcInfo))
@@ -287,7 +290,7 @@ galaxy <-
         }
     }
     
-    if (isTestable())
+    if (isTestable(funcInfo, funcName, package))
     {
         testDataDir <- file.path(galaxyConfig@galaxyHome, "test-data", funcName)
         if (!file.exists(testDataDir))
@@ -492,3 +495,46 @@ getFuncInfo <- function(func, param)
     return(ret)
 }
 
+runFunctionalTest <- function(func)
+{
+    funcName <- deparse(substitute(func))
+    package <- getPackage(func)
+    funcInfo <- list()
+    for (param in names(formals(func)))
+        funcInfo[[param]] <- getFuncInfo(func, param)
+
+    if (is.null(package))
+        gstop("Function must be in a package.")
+    if (!isTestable(funcInfo, funcName, package)) 
+        gstop("Not enough information to run functional test.")
+    params <- list()
+    outfiles <- list()
+    fixtures <- list()
+    for (info in funcInfo)
+    {
+        if (info$type == "GalaxyOutput")
+        {
+            outfiles[info$param] <- tempfile()
+            params[info$param] <- outfiles[info$param]
+        } else if (info$type == "GalaxyInputFile") {
+            params[info$param] <- system.file("functionalTests",
+                funcName, info$param, package=package)
+        } else {
+            params[info$param] <- info$testValues
+        }
+    }
+    res <- do.call(func, params)
+    diffOK <- logical(0)
+    for (outfilename in names(outfiles))
+    {
+
+        generated <- unlist(outfiles[outfilename])
+        fixture <- system.file("functionalTests",
+            funcName, funcInfo[[outfilename]]$param, package=package)
+        diff <- tools:::md5sum(generated) == tools:::md5sum(fixture)
+        diffOK <- c(diffOK, diff)
+        if(!diff)
+            gwarning("Generated '%s' differs from fixture", unname(outfilename))
+    }
+    all(diffOK)
+}

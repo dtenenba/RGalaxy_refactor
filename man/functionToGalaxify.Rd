@@ -13,7 +13,7 @@
 functionToGalaxify(inputfile1, inputfile2, plotTitle=character(),
     plotSubTitle="My subtitle",
     outputfile1=GalaxyOutput("mydata", "csv"),
-    outputfile2=GalaxyOutput("myplot", "pdf"))
+    outputfile2=GalaxyOutput("myplot", "png"))
 }
 
 \arguments{
@@ -33,7 +33,7 @@ functionToGalaxify(inputfile1, inputfile2, plotTitle=character(),
     The filename of the comma-separated output file to generate.
   }
   \item{outputfile2}{
-    The filename of the PDF plot file to create.
+    The filename of the PNG plot file to create.
   }
 }
 

@@ -4,7 +4,7 @@ functionToGalaxify <- function(inputfile1=GalaxyInputFile(),
     plotSubTitle=GalaxyCharacterParam("My subtitle",
         testValues="test plot subtitle"),
     outputfile1=GalaxyOutput("mydata", "csv"),
-    outputfile2=GalaxyOutput("myplot", "pdf"))
+    outputfile2=GalaxyOutput("myplot", "png"))
 {
     ## Make sure the file can be read
     data1 <- tryCatch({
@@ -23,7 +23,7 @@ functionToGalaxify <- function(inputfile1=GalaxyInputFile(),
     
     write.csv(data3, file=outputfile1)
     
-    pdf(outputfile2)
+    png(outputfile2)
     if (missing(plotTitle)) plotTitle <- ""
     plot(data3, main=plotTitle, sub=plotSubTitle)
     dev.off()
