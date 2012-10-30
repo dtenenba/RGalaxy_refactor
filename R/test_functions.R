@@ -1,6 +1,8 @@
 functionToGalaxify <- function(inputfile1=GalaxyInputFile(),
-    inputfile2=GalaxyInputFile(), plotTitle=GalaxyCharacterParam(),
-    plotSubTitle=GalaxyCharacterParam("My subtitle"),
+    inputfile2=GalaxyInputFile(),
+    plotTitle=GalaxyCharacterParam(testValues="test plot title"),
+    plotSubTitle=GalaxyCharacterParam("My subtitle",
+        testValues="test plot subtitle"),
     outputfile1=GalaxyOutput("mydata", "csv"),
     outputfile2=GalaxyOutput("myplot", "pdf"))
 {

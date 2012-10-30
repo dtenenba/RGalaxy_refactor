@@ -150,8 +150,6 @@ file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
 
 <<galaxy-function, results=hide>>=
 galaxy(functionToGalaxify,
-    manpage="functionToGalaxify",
-    version="0.99.0",
     name="Add", 
     package="RGalaxy",
     galaxyConfig=GalaxyConfig(getwd(), "mytool", "Test Section",

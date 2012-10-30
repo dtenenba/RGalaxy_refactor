@@ -3,6 +3,8 @@ toolDir <- "RGalaxy_test_tool"
 funcName <- "functionToGalaxify"
 
 dir.create(galaxyHome, recursive=TRUE, showWarnings=FALSE)
+dir.create(sprintf("%s/test-data", galaxyHome),
+    recursive=TRUE, showWarnings=FALSE)
 file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
     file.path(galaxyHome, "tool_conf.xml"), overwrite=TRUE)
 

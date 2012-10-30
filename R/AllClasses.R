@@ -155,17 +155,26 @@ GalaxyParam <- function(
         size=size, required=required, requiredMsg=requiredMsg)
 }
 
+
+setClass("GalaxyNonFileParam", contains=c("GalaxyParam", "VIRTUAL"))
+
 GalaxyIntegerParam = setClass("GalaxyIntegerParam",
-    contains=c("GalaxyParam", "integer"))
+    representation(testValues="integer"),
+    contains=c("GalaxyNonFileParam", "integer"))
 
 GalaxyNumericParam = setClass("GalaxyNumericParam",
-    contains=c("GalaxyParam", "numeric"))
+    representation(testValues="numeric"),
+    contains=c("GalaxyNonFileParam", "numeric"))
 
 GalaxyCharacterParam = setClass("GalaxyCharacterParam",
-    contains=c("GalaxyParam", "character"))
+    representation(testValues="character"),
+    contains=c("GalaxyNonFileParam", "character"))
 
 GalaxyLogicalParam = setClass("GalaxyLogicalParam",
-    contains=c("GalaxyParam", "logical"))
+    representation(testValues="logical"),
+    contains=c("GalaxyNonFileParam", "logical"))
+
+
 
 
 

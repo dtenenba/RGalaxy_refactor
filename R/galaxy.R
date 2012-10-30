@@ -95,7 +95,30 @@ galaxy <-
 
     for (param in names(formals(func)))
         funcInfo[[param]] <- getFuncInfo(func, param)
-        
+    
+    isTestable <- function() 
+    {   
+        testables <- logical(0)
+        for (info in funcInfo)
+        {
+            testable <- FALSE
+            if (!is.null(info$testValues) && length(info$testValues) > 0)
+                testable <- TRUE
+            if (length(info['type']) > 0 &&
+                info['type'] %in% c("GalaxyInputFile", "GalaxyOutput") &&
+                !is.null(package))
+            {
+                testFile <- system.file("functionalTests", funcName,
+                    info$param, package=package)
+                testable <- file.exists(testFile)
+            }
+            testables <- c(testables, testable)
+        }
+        all(testables)
+    }
+
+    if (!isTestable()) 
+        gwarning("Not enough information to create a functional test.")
         
     if (!suppressWarnings(any(lapply(funcInfo,
         function(x)x$type=="GalaxyOutput"))))
@@ -104,6 +127,9 @@ galaxy <-
             "object."))
     }
     
+
+
+
     createScriptFile(scriptFileName, func, funcName, funcInfo,
         package, useRserve)
     
@@ -141,7 +167,8 @@ galaxy <-
     xmlAttrs(commandNode)["interpreter"] <- "Rscript --vanilla"
     inputsNode <- newXMLNode("inputs", parent=xml)
     outputsNode <- newXMLNode("outputs", parent=xml)
-    
+    if (isTestable())
+        testsNode <- newXMLNode("tests", parent=xml)
     
     for (name in names(funcInfo))
     {
@@ -260,6 +287,34 @@ galaxy <-
         }
     }
     
+    if (isTestable())
+    {
+        testDataDir <- file.path(galaxyConfig@galaxyHome, "test-data", funcName)
+        if (!file.exists(testDataDir))
+            dir.create(testDataDir)
+        #testFileDest <- file.path(funcName)
+        testNode <- newXMLNode("test", parent=testsNode)
+        for (info in funcInfo)
+        {
+            testParamNode <- newXMLNode("param", parent=testNode)
+            xmlAttrs(testParamNode)["name"] <- info$param
+            if (length(info$type) > 0 && 
+                info$type %in% c("GalaxyInputFile", "GalaxyOutput"))
+            {
+                srcFile <- system.file("functionalTests", funcName, info$param,
+                    package=package)
+                if (!file.exists(file.path(testDataDir, info$param)))
+                    file.copy(srcFile, testDataDir)
+                xmlAttrs(testParamNode)["file"] <-
+                    sprintf("%s/%s", funcName, info$param)
+            }
+            if (!is.null(info$testValues) && length(info$testValues) > 0)
+            {
+                ## for now, just assume one value
+                xmlAttrs(testParamNode)['value'] <- info$testValues
+            }
+        }
+    }
     
     helpText <- ""
     helpText <- generateHelpText(rd)
@@ -404,6 +459,7 @@ getFriendlyName <- function(camelName)
 getFuncInfo <- function(func, param)
 {
     ret <- list()
+    ret$param <- param
     ret$selectoptions <- NULL
     f <- formals(func)[[param]]
     cl <- NULL
@@ -429,5 +485,10 @@ getFuncInfo <- function(func, param)
     else
         ret$selectoptions <- f
     ret$label <- getFriendlyName(param)
+    if (extends(cl, "GalaxyNonFileParam"))
+        ret$testValues <- eval(f)@testValues
+    else
+        ret$testValues <- NULL
     return(ret)
 }
+
