@@ -46,3 +46,4 @@ getVersion <- function(func)
     tryCatch(packageDescription(getPackage(func))$Version,
         error=function(x) NULL)
 }
+

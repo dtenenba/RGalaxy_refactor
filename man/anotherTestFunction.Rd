@@ -43,26 +43,8 @@ anotherTestFunction(inputfile1=GalaxyInputFile(),
 }
 
 \seealso{
-    \code{\link{galaxy}}, \code{\link{GalaxyParam}},
+    \code{\link{galaxy}},
     \code{\link{GalaxyConfig}}, \code{\link{GalaxyOutput}}
-}
-\details{
-    This trivial method illustrates some best practices to use when writing
-    functions to be adapted as Galaxy tools. For example, any error conditions
-    should be handled with \code{stop} with a useful/informative error
-    message. The Galaxy user will see these messages if an error occurs.
-    
-    Functions which take datasets as input should accept as arguments
-    the filenames pointing to those datasets. The Galaxy user interface
-    will allow the user to chose the dataset graphically.
-    
-    Return values of functions are ignored. Function output should be
-    written to one or more files, and the names of these files should
-    be passed into the function as arguments.
-    
-    Functions should be documented with a manual page. \code{RGalaxy}
-    will use this manual page to fill in relevant sections of the
-    Galaxy XML file.
 }
 
 \examples{

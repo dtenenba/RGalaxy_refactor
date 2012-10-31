@@ -96,4 +96,13 @@ foo = function(input = GalaxyInputFile(),
     plot(cars)
     dev.off()
 }
-    
+
+addTwoNumbers <- 
+    function(
+        number1=GalaxyNumericParam(required=TRUE),
+        number2=GalaxyNumericParam(required=TRUE),
+        sum=GalaxyOutput("sum", "txt"))
+{
+    ## here is a comment
+    cat(number1 + number2, file=sum)
+}

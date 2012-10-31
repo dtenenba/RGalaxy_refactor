@@ -332,7 +332,8 @@ generateHelpText <- function(rd)
     ret <- character(0)
     ret <- c(ret, "", "**Description**", "",
         parseSectionFromText(rd, "Description"))
-    ret <- c(ret, "", "**Details**", "", parseSectionFromText(rd, "Details"))
+    ret <- c(ret, "", "**Details**", "",
+        parseSectionFromText(rd, "Details", FALSE))
     
     paste(ret, collapse="\n")
 }

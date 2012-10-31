@@ -29,7 +29,7 @@ galaxy(func, manpage, ..., name=getFriendlyName(deparse(substitute(func))),
   }
   \item{...}{
     \bold{Required.}
-    A list of at least one \code{\link{GalaxyParam}} object and at
+    A list of at least one \code{\link{FIXME}} object and at
     least one \code{\link{GalaxyOutput}} objects.
   }
   \item{name}{
@@ -71,7 +71,7 @@ galaxy(func, manpage, ..., name=getFriendlyName(deparse(substitute(func))),
 }
 
 \seealso{
-    \code{\link{GalaxyParam}}, \code{\link{GalaxyConfig}},
+   \code{\link{GalaxyConfig}},
     \code{\link{GalaxyOutput}}
 }
 

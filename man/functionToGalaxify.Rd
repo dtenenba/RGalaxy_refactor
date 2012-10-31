@@ -42,7 +42,7 @@ functionToGalaxify(inputfile1, inputfile2, plotTitle=character(),
 }
 
 \seealso{
-    \code{\link{galaxy}}, \code{\link{GalaxyParam}},
+    \code{\link{galaxy}}, 
     \code{\link{GalaxyConfig}}, \code{\link{GalaxyOutput}}
 }
 \details{

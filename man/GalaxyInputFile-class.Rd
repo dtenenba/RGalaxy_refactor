@@ -25,7 +25,7 @@ No methods defined with class "GalaxyInputFile" in the signature.
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{link{galaxy}}, \code{\link{GalaxyConfig}}, \code{\link{GalaxyParam}}
+\code{link{galaxy}}, \code{\link{GalaxyConfig}}
 }
 \examples{
     inputfile1=GalaxyInputFile()

@@ -57,7 +57,7 @@ getHelpFromText <- function(rd, arg)
     return(sub("\\s+$", "", paste(ret, collapse="\n")))
 }
 
-parseSectionFromText <- function(rd, section)
+parseSectionFromText <- function(rd, section, required=TRUE)
 {
     text <- capture.output(Rd2txt(rd))
     ret <- character()
@@ -84,7 +84,17 @@ parseSectionFromText <- function(rd, section)
         }
     }
     if (!found)
-        gstop(sprintf("Did not find section '%s' in man page.", section))
+    {
+        msg <- sprintf("Did not find section '%s' in man page.", section) 
+        if (required)
+        {
+            gstop(msg)
+        } else {
+            gmessage(msg)
+            return("")
+        }
+
+    }
     ret <- gsub("^ *", "", ret)
     if (nchar(ret[1])==0 && length(ret)>2)
     {

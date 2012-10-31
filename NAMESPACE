@@ -8,6 +8,7 @@ export(GalaxyIntegerParam, GalaxyNumericParam,
 	GalaxyCharacterParam, GalaxyLogicalParam)
 export(gstop, gwarning, gmessage)
 export(runFunctionalTest)
+export(addTwoNumbers)
 import(BiocGenerics)
 importFrom(Biobase, copySubstitute)
 importFrom(roxygen2, roxygenize, rd_roclet)
