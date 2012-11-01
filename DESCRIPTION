@@ -11,3 +11,4 @@ Imports: BiocGenerics, Biobase, roxygen2
 Suggests: RUnit, hgu95av2.db, knitr
 License: Artistic-2.0
 KeepSource: TRUE
+SystemRequirements: pandoc for building the vignette from source
