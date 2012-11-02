@@ -10,7 +10,7 @@
 }
 
 \usage{
-addTwoNumbers(number1=GalaxyNumericParam(required=TRUE, testValues=5L),
+addTwoNumbersWithTest(number1=GalaxyNumericParam(required=TRUE, testValues=5L),
         number2=GalaxyNumericParam(required=TRUE, testValues=5L),
         sum=GalaxyOutput("sum", "txt"))
 }
