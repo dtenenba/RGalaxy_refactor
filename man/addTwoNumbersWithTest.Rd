@@ -1,17 +1,17 @@
-\name{addTwoNumbers}
+\name{addTwoNumbersWithTest}
 
-\alias{addTwoNumbers}
-\title{Add two numbers}
+\alias{addTwoNumbersWithTest}
+\title{Add two numbers (with functional test)}
 
 \description{
     An example function that can be made into a Galaxy tool.
     Takes two numbers, adds them, and returns a file containing
-    the result.
+    the result. This version demonstrates a functional test.
 }
 
 \usage{
-addTwoNumbers(number1=GalaxyNumericParam(required=TRUE),
-        number2=GalaxyNumericParam(required=TRUE),
+addTwoNumbers(number1=GalaxyNumericParam(required=TRUE, testValues=5L),
+        number2=GalaxyNumericParam(required=TRUE, testValues=5L),
         sum=GalaxyOutput("sum", "txt"))
 }
 
@@ -35,12 +35,13 @@ addTwoNumbers(number1=GalaxyNumericParam(required=TRUE),
     \code{\link{galaxy}}, 
     \code{\link{GalaxyConfig}}, \code{\link{GalaxyOutput}},
     \code{\link{addTwoNumbers}}
-
 }
 
 \examples{
 t <- tempfile()
-addTwoNumbers(2, 2, t)
+addTwoNumbersWithTest(2, 2, t)
 readLines(t, warn=FALSE)
+runFunctionalTest(addTwoNumbersWithTest) ## should return TRUE
+
 }
 

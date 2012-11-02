@@ -207,11 +207,42 @@ Our function will have a self-contained test.
 Also, when submitting tools to the public Galaxy instance,
 functional tests like this are required.
 
+Here is our `addTwoNumbers` function again, this time with
+a functional test:
+
+```{r addTwoNumbersWithTest, printfun='addTwoNumbersWithTest', echo=FALSE, tidy=FALSE}
+#source code goes here
+```
+
+
+The only visible difference is that we've added a `testValues`
+argument to each parameter. Another, subtler difference is that we have added
+a file in our package called `inst/functionalTests/addTwoNumbersWithTest/sum`.
+By using this convention, we ensure RGalaxy can find the file. 
+
+Does the function pass its functional test?
+
+```{r runFunctionalTest}
+runFunctionalTest(addTwoNumbersWithTest)
+```
+
+Note that this just runs the function in `R`, it does not test it
+inside a running Galaxy. But because the functional test infrastructure is
+present, you can do that from your Galaxy home directory as follows:
+
+  ./run_functional_tests.sh -id addTwoNumbersWithTest
+
+The output of the test will be written to run_functional_tests.html.
+
+
 ### Should my function be in a package?
 
 We've glossed over it so far, but the `addTwoNumbers()` function
 and its man page live a package (the `RGalaxy` package). 
-It is possible to 
+It is possible to expose in Galaxy a function that does not
+live in a package, but you have to provide a lot of extra information.
+We recommend that the functions you expose live in a package
+(and be exported in your NAMESPACE file).
 
 * pdf caveat
 
@@ -221,3 +252,4 @@ It is possible to
 ## Using Rserve for better performance
 
 ## A practical example
+

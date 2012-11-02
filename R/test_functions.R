@@ -103,6 +103,15 @@ addTwoNumbers <-
         number2=GalaxyNumericParam(required=TRUE),
         sum=GalaxyOutput("sum", "txt"))
 {
-    ## here is a comment
     cat(number1 + number2, file=sum)
 }
+
+addTwoNumbersWithTest <- 
+    function(
+        number1=GalaxyNumericParam(required=TRUE, testValues=5L),
+        number2=GalaxyNumericParam(required=TRUE, testValues=5L),
+        sum=GalaxyOutput("sum", "txt"))
+{
+    cat(number1 + number2, file=sum)
+}
+

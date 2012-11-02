@@ -30,8 +30,18 @@
     a vector of a greater length, in which case it is rendered as
     a dropdown (select) list.
 
+    \describe{
+      \item{testValues:}{
+        (optional) Either an integer(1), numeric(1), character(1), or logical(1),
+        depending on the class used. A value to be used in functional testing 
+        (running your function with a fixed set of inputs and checking that the
+        outputs match what is expected).
+      }
+    }
+
 
     Additional parameters are as follows:
+
     \describe{
       \item{label:}{
       A character(1).
