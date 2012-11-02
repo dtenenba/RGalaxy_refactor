@@ -78,10 +78,9 @@
 }
 \details{
 	The arguments to these classes are based on 
-	\url{http://wiki.g2.bx.psu.edu/Admin/Tools/Tool%20Config%20Syntax#A.3Cparam.3E_tag_set}
+	\url{http://wiki.g2.bx.psu.edu/Admin/Tools/Tool\%20Config\%20Syntax#A.3Cparam.3E_tag_set}
 }
 
-}
 \examples{
 	GalaxyIntegerParam()
 	GalaxyIntegerParam(1L)
