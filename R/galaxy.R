@@ -496,6 +496,11 @@ getFuncInfo <- function(func, param)
     return(ret)
 }
 
+##' Run the functional test associated with a function.
+##' 
+##' FIXME
+##' @return Whether the test passes.
+##' @param func A function to be exposed in Galaxy.
 runFunctionalTest <- function(func)
 {
     funcName <- deparse(substitute(func))

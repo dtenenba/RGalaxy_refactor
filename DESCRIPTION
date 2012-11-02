@@ -6,9 +6,26 @@ Version: 1.1.2
 Author: The Bioconductor Dev Team
 Maintainer: Bioconductor Package Maintainer <maintainer@bioconductor.org>
 biocViews: Infrastructure
-Depends: XML, methods, tools, optparse, digest
-Imports: BiocGenerics, Biobase, roxygen2
-Suggests: RUnit, hgu95av2.db, knitr
+Depends:
+    XML,
+    methods,
+    tools,
+    optparse,
+    digest
+Imports:
+    BiocGenerics,
+    Biobase,
+    roxygen2
+Suggests:
+    RUnit,
+    hgu95av2.db,
+    knitr
 License: Artistic-2.0
 KeepSource: TRUE
 SystemRequirements: pandoc for building the vignette from source
+Collate:
+    'AllClasses.R'
+    'galaxy.R'
+    'man.R'
+    'test_functions.R'
+    'utils.R'

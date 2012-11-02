@@ -16,11 +16,26 @@ knit_hooks$set(printfun = function(before, options, envir) {
   paste(c('\n```r\n', txt, '\n```\n'), collapse="\n")
 })
 ```
+```{r hook-printmanpage, echo=FALSE}
+knit_hooks$set(printmanpage = function(before, options, envir) {
+  if (before) return()
+    manpage <- file.path("..", "man",
+      sprintf("%s.Rd", options$printmanpage))
+  lines <- readLines(manpage)
+  ret <- "\n"
+  for (line in lines)
+  {
+      ret <- paste(ret, "\t", line, "\n", sep="")
+  }
+  ret
+})
+```
+
 
 # RGalaxy
 
 [Galaxy](http://galaxyproject.org/)
-is an open, web-based platform for data intensive biomedical research.
+is an open, web-based platform for data-intensive biomedical research.
 It provides an easy-to-use web interface and can expose bioinformatics
 workflows written in any programming language.
 
@@ -53,13 +68,19 @@ There are a few things to notice about this function:
 
 * The data type of each parameter is specified. And instead of 
   just specifying `R`'s `numeric` type, we are using a special
-  class called `GalaxyNumericParam`.
+  class called `GalaxyNumericParam`. This is because Galaxy
+  (unlike `R`) needs to know the type of each parameter,
+  as well as other information
+* The function's name is descriptive.
 * The return value of the function is not important. 
 * All the function's inputs and outputs are specified as
-  arguments in its signature.
+  arguments in its signature. This is required as Galaxy
+  communicates with tools by sending them files and reading
+  files they generate.
 * By default, parameters are marked as not required by Galaxy.
   Adding `required=TRUE` tells Galaxy not to allow empty values.
-* This function can be run from within R:
+* This function can be run from within R, passing it ordinary
+`numeric` values:
 
 ```{r run_addTwoNumbers}
 t <- tempfile()
@@ -67,3 +88,136 @@ addTwoNumbers(2, 2, t)
 readLines(t, warn=FALSE)
 ```
 
+## Documenting the Example
+
+We're almost ready to tell Galaxy about our function, but first we
+need to document it with a manual page. `RGalaxy` will use information
+in this page to create the Galaxy tool, and the man page will also
+be useful to anyone who wants to run your function in `R`.
+
+The man page might look like this:
+```{r addTwoNumbers_man, printmanpage='addTwoNumbers', echo=FALSE, tidy=FALSE}
+#source code goes here
+```
+Some things to note about this man page:
+
+* The `name`, `alias`, `description`, `title`, `usage`, and
+  `arguments` sections are required. The `details` section
+  is not required but its use is encouraged (`RGalaxy` will
+  notify you if this section is missing).
+* While it's good to have an `example` section, this section
+  is only useful to people running your function via `R`.
+  This section is not used by `RGalaxy`.
+
+## Installing Galaxy
+
+Before we can tell Galaxy about our function, we have to install
+Galaxy.
+
+The [Galaxy Installation page](http://wiki.g2.bx.psu.edu/Admin/Get%20Galaxy)
+gives full instructions, but in a nutshell, you can install
+Galaxy as follows (you may need to install
+[Mercurial](http://mercurial.selenic.com/), which provides the `hg` command:
+
+  hg clone https://bitbucket.org/galaxy/galaxy-dist/
+
+The directory where you just installed Galaxy (a full path ending in
+`galaxy-dist`) is your "Galaxy Home" directory, represented by
+`galaxyHome` in the following code snippet.
+
+```{r galaxyHomeSetup, echo=FALSE, results="hide"}
+galaxyHome <- getwd()
+toolDir <- "RGalaxy_test_tool"
+funcName <- "functionToGalaxify"
+
+file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
+    file.path(galaxyHome, "tool_conf.xml"), overwrite=FALSE)
+galaxyHome <- getwd()
+```
+
+## Telling Galaxy about the function
+
+Now we point Galaxy to the function we just wrote:
+
+```{r run_galaxy, tidy=FALSE}
+galaxy(addTwoNumbers,
+    package="RGalaxy",
+    galaxyConfig=
+      GalaxyConfig(galaxyHome, "mytool", "Test Section",
+        "testSectionId")
+    )
+```
+
+Notice the warning about functional tests. We'll cover that
+later in the vignette. 
+
+The `galaxy` function notifies you that the `details` section
+of the man page is empty. It also returns the path to the
+XML tool wrapper it created.
+
+## Running the example function in Galaxy
+
+To start Galaxy, open a command window and change to your
+Galaxy home directory (defined earlier). Then issue this command:
+
+  ./run.sh --reload
+
+If Galaxy is already running, you should stop it
+(with control-C) and restart it with the command above.
+Galaxy should always be restarted after running the 
+`galaxy` function.
+
+You can now access Galaxy at
+[http://localhost:3000](http://localhost:3000).
+
+If you click on "Test Section" and then "Add Two Numbers", you
+should see something like Figure 1.
+
+![The Add Two Numbers tool in Galaxy](addTwoNumbers.jpg)
+
+Things to notice about this:
+
+* `RGalaxy` has generated a tool in which each parameter
+  has some explanatory text that comes from our man page.
+* The tool name ("Add Two Numbers") comes from the function
+  name (this can   be overridden by passing `name` to `galaxy()`).
+* If you try and enter a non-number, Galaxy will complain.
+  This is because we specified `GalaxyNumericParam` in our
+  function.
+* If you try and leave either of the numbers blank, Galaxy
+  will complain. This is because we specified `required=TRUE`.
+
+If we enter 10 and 5, then click "Execute", Galaxy will run and
+when finished will show 'sum.txt' in the History Pane at the right.
+Clickin on it should show something like Figure 2. You can download
+the result or send it to another Galaxy tool.
+
+![Result of Add Two Numbers](addTwoNumbers_result.jpg)
+
+## Functional Testing
+
+We just ran Galaxy and made sure our tool worked.
+It would be nice to automate this procedure so we
+can know that for inputs `x` and `y`, our tool
+will always produce output `d`. 
+
+With a couple of small additions, we can accomplish this.
+Our function will have a self-contained test.
+
+Also, when submitting tools to the public Galaxy instance,
+functional tests like this are required.
+
+### Should my function be in a package?
+
+We've glossed over it so far, but the `addTwoNumbers()` function
+and its man page live a package (the `RGalaxy` package). 
+It is possible to 
+
+* pdf caveat
+
+
+## Best practices - extended example?
+
+## Using Rserve for better performance
+
+## A practical example

@@ -10,8 +10,11 @@
 }
 
 \usage{
-functionToGalaxify(inputfile1, inputfile2, plotTitle=character(),
-    plotSubTitle="My subtitle",
+functionToGalaxify(inputfile1=GalaxyInputFile(),
+    inputfile2=GalaxyInputFile(),
+    plotTitle=GalaxyCharacterParam(testValues="test plot title"),
+    plotSubTitle=GalaxyCharacterParam("My subtitle",
+        testValues="test plot subtitle"),
     outputfile1=GalaxyOutput("mydata", "csv"),
     outputfile2=GalaxyOutput("myplot", "png"))
 }
