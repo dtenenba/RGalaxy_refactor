@@ -115,3 +115,15 @@ addTwoNumbersWithTest <-
     cat(number1 + number2, file=sum)
 }
 
+probeLookup <- function(
+    probe_ids=GalaxyCharacterParam(
+        required=TRUE,
+        testValues="1002_f_at 1003_s_at"),
+    outputfile=GalaxyOutput("probeLookup", "csv"))
+{
+    suppressPackageStartupMessages(library(hgu95av2.db))
+    ids <- strsplit(probe_ids, " ")[[1]]
+    results <- select(hgu95av2.db, keys=ids, cols=c("SYMBOL","PFAM"),
+        keytype="PROBEID")
+    write.csv(results, file=outputfile)
+}

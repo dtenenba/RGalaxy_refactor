@@ -10,6 +10,7 @@ export(GalaxyIntegerParam, GalaxyNumericParam,
 	GalaxyCharacterParam, GalaxyLogicalParam)
 export(gstop, gwarning, gmessage)
 export(runFunctionalTest)
+export(probeLookup)
 export(addTwoNumbers, addTwoNumbersWithTest)
 import(BiocGenerics)
 importFrom(Biobase, copySubstitute)

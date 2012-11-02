@@ -69,6 +69,9 @@ isTestable <- function(funcInfo, funcName, package)
 
 
 ## todo break into smaller functions
+## todo - handle it at the R level if a required parameter is missing.
+##     This should not happen when functions are called from Galaxy,
+##     but will arise when functions are called from R.
 galaxy <- 
     function(func, 
         package=getPackage(func),

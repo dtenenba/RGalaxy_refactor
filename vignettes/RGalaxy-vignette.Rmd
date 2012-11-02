@@ -249,7 +249,15 @@ We recommend that the functions you expose live in a package
 
 
 
-## Best practices - extended example?
+## Best practices
+
+* If your function depends on other packages, load those packages
+  with `library()` within your function.
+* Your code should handle improper input and other error conditions
+  with the function `gstop()`. Error messages will be seen
+  by the Galaxy user.
+
+
 
 ## Using Rserve for better performance
 
@@ -305,3 +313,20 @@ the machine where you are running Galaxy.
 
 ## A practical example
 
+Suppose you have some Affymetrix probe IDs and you want to look up the
+PFAM and SYMBOL names for them. It's quite easy to write a function
+to expose this in Galaxy:
+
+```{r probeLookup, printfun='probeLookup', echo=FALSE, tidy=FALSE}
+#source code goes here
+```
+
+Behind the scenes, we've also written a man page for the
+function, and put a test fixture in our package (which can be
+found at
+`inst/functionalTests/probeLookup/outputfile`).
+
+Let's run it and make sure it works:
+```{r test_probeLookup}
+runFunctionalTest(probeLookup)
+```
