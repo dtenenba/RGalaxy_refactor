@@ -132,7 +132,7 @@ funcName <- "functionToGalaxify"
 
 file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
     file.path(galaxyHome, "tool_conf.xml"), overwrite=FALSE)
-galaxyHome <- getwd()
+dir.create("test-data")
 ```
 
 ## Telling Galaxy about the function
@@ -141,7 +141,6 @@ Now we point Galaxy to the function we just wrote:
 
 ```{r run_galaxy, tidy=FALSE}
 galaxy(addTwoNumbers,
-    package="RGalaxy",
     galaxyConfig=
       GalaxyConfig(galaxyHome, "mytool", "Test Section",
         "testSectionId")
@@ -234,6 +233,10 @@ present, you can do that from your Galaxy home directory as follows:
 
 The output of the test will be written to run_functional_tests.html.
 
+Note that `R` doesn't always produce the same output each time,
+even though the files may look identical. The `pdf` function 
+in particular may produce different files. You can use the `png`
+function as a workaround.
 
 ### Should my function be in a package?
 
@@ -244,12 +247,61 @@ live in a package, but you have to provide a lot of extra information.
 We recommend that the functions you expose live in a package
 (and be exported in your NAMESPACE file).
 
-* pdf caveat
 
 
 ## Best practices - extended example?
 
 ## Using Rserve for better performance
+
+Galaxy runs tools by running scripts in various languages
+at the command line. These scripts are generally self-contained.
+Sometimes it can take a long time for the script to load its 
+dependencies. Sometimes this takes longer than the actual
+work that the script is supposed to do. We can stop
+waiting for the script to load its dependencies if 
+the script does its work on a remote instance of `R` where
+the dependencies have already been loaded. We accomplish this
+using the
+[Rserve](http://cran.r-project.org/web/packages/Rserve/index.html)
+package.
+
+To use `Rserve`, create an `Rserv.conf` file that contains statements
+like this:
+
+    eval library(LongLoadingPackage1)
+    eval library(LongLoadingPackage2)
+
+Replace the package names with the packages your function
+uses that take a long time to load.
+
+Start Rserve as follows:
+
+    R CMD Rserve --vanilla --RS-conf Rserv.conf
+
+Re-run Galaxy on your function, specifying that Rserv should be used:
+
+```{r withRserve, tidy=FALSE}
+galaxy(addTwoNumbersWithTest,
+    galaxyConfig=
+      GalaxyConfig(galaxyHome, "mytool", "Test Section",
+        "testSectionId"),
+    RserveConnection=RserveConnection()
+    )
+```
+
+Restart Galaxy if it is already running. Your function should 
+be much faster.
+
+You can run Rserve on a different machine (and on a different port)
+by passing this information to the `RserveConnection()` function:
+
+```{r RserveConnection}
+RserveConnection(host="mymachine", port=2012L)
+```
+
+Note that the other machine should have shared disk space with
+the machine where you are running Galaxy.
+
 
 ## A practical example
 

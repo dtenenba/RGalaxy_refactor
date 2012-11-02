@@ -2,6 +2,8 @@ export(galaxy, functionToGalaxify, anotherTestFunction,
     GalaxyConfig, GalaxyOutput, getFriendlyName, GalaxyInputFile,
     testFunctionWithSelect)
 exportClass(GalaxyConfig, GalaxyOutput, GalaxyInputFile)
+exportClass(RserveConnection)
+export(RserveConnection)
 exportClass(GalaxyIntegerParam, GalaxyNumericParam,
 	GalaxyCharacterParam, GalaxyLogicalParam)
 export(GalaxyIntegerParam, GalaxyNumericParam,

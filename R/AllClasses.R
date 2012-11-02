@@ -216,3 +216,9 @@ GalaxyInputFile <- function(required=TRUE)
 }
 
 setClass("GalaxyRemoteError", contains="character")
+
+RserveConnection <- setClass("RserveConnection", contains="Galaxy",
+    representation("host"="character",
+        port="integer"),
+    prototype=list("host"="localhost",
+        "port"=6311L))

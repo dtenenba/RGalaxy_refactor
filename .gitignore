@@ -4,3 +4,5 @@ vignettes/RGalaxy-vignette.Rnw.old
 vignettes/RGalaxy-vignette.pdf
 vignettes/tools
 vignettes/tool_conf.xml
+test-data
+vignettes/*.tiff

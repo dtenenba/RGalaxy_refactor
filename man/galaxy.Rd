@@ -18,7 +18,7 @@ galaxy(func,
         version=getVersion(func),
         galaxyConfig,
         dirToRoxygenize,
-        useRserve=FALSE)
+        RserveConnection=NULL)
 
 }
 
@@ -67,9 +67,11 @@ galaxy(func,
     \code{roxygenize()} from the \code{roxygen2} package, creating manual
     pages from source code comments.
   }
-  \item{useRserve}{
-    Sends the function to a running Rserve for evaluation. This can
+  \item{RserveConnection}{
+    If set (by calling \code{\link{RserveConnection}}), 
+    sends the function to a running Rserve for evaluation. This can
     make functions run faster since dependencies have already been loaded.
+    If NULL (the default), function is run normally.
     See vignette for more information.
   }
 }
@@ -96,6 +98,7 @@ file.copy(system.file("galaxy", "tool_conf.xml", package="RGalaxy"),
 
 galaxy(functionToGalaxify,
     galaxyConfig=GalaxyConfig(galaxyHome, "mytool",
-      "Test Section", "testSectionId"))
+      "Test Section", "testSectionId"),
+    RserveConnection=RserveConnection())
 }
 

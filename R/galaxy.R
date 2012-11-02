@@ -78,7 +78,7 @@ galaxy <-
         version=getVersion(func),
         galaxyConfig,
         dirToRoxygenize,
-        useRserve=FALSE)
+        RserveConnection=NULL)
 {
     requiredFields <- c("func", "galaxyConfig")
     missingFields <- character(0)
@@ -134,7 +134,7 @@ galaxy <-
 
 
     createScriptFile(scriptFileName, func, funcName, funcInfo,
-        package, useRserve)
+        package, RserveConnection)
     
     xmlFileName <- file.path(fullToolDir, paste(funcName, "xml", sep="."))
     unlink(xmlFileName)
@@ -348,7 +348,7 @@ displayFunction <- function(func, funcName)
 }
 
 createScriptFile <- function(scriptFileName, func, funcName, funcInfo,
-    package, useRserve)
+    package, RserveConnection)
 {
     unlink(scriptFileName)
 
@@ -392,10 +392,13 @@ createScriptFile <- function(scriptFileName, func, funcName, funcInfo,
         repList$LIBRARY <- ""
         repList$FULLFUNCNAME <- funcName
     }
-    if (useRserve)
+    if (!is.null(RserveConnection))
     {
         repList$LIBRARY <- "suppressPackageStartupMessages(library(RSclient))"
-        repList$DOCALL <- paste("c <- RS.connect()",
+        repList$DOCALL <- 
+            paste(sprintf("c <- RS.connect(host=%s, port=%s)",
+                RserveConnection@host,
+                RserveConnection@port),
             "RS.eval(c, options('useFancyQuotes' = FALSE))",
             "RS.eval(c, suppressPackageStartupMessages(library(RGalaxy)))",
             "RS.assign(c, 'params', params)",
