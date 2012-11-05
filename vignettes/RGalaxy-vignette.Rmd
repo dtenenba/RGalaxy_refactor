@@ -301,6 +301,14 @@ galaxy(addTwoNumbersWithTest,
     )
 ```
 
+Install the RSclient package:
+
+```{r install_RSclient, eval=FALSE}
+source("http://bioconductor.org/biocLite.R")
+biocLite("RSclient", siteRepos="http://www.rforge.net")
+```
+
+
 Restart Galaxy if it is already running. Your function should 
 be much faster.
 

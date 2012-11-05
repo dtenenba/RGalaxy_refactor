@@ -12,7 +12,6 @@ Depends:
     tools,
     optparse,
     digest,
-    RSclient
 Imports:
     BiocGenerics,
     Biobase,
@@ -21,7 +20,9 @@ Suggests:
     RUnit,
     hgu95av2.db,
     knitr,
-    Rserve,
+    Rserve
+Enhances:
+    Rsclient
 License: Artistic-2.0
 KeepSource: TRUE
 SystemRequirements: pandoc for building the vignette from source
